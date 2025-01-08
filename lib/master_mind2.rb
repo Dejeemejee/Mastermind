@@ -1,83 +1,54 @@
+require_relative "instructions.rb"
+require_relative "board_class.rb"
+#require_relative "player_maker_breaker_class.rb"
 
-class Game_Board
-  
-  #@@bd = Array.new()
-  @@player_code = Array.new(4) {}
-  @@board = []
-  def initialize
-      @secret_code = []
-      @pegs = []
-  end
+module Playable
+  POSSIBLE_VALUES = ["1", '2', '3', '4']
 
-  def make_code
-    4.times do |num|
-     @secret_code[num] = rand(1..4)
-   end
-   p  @secret_code
-  end
-
-  def get_code
-    for i in 0..3
-     # until /\d/.match?(@player_code[i])
-      #end
-      @@player_code[i] = gets.chomp.to_i
+  def get_player_code
+    puts "Enter your code: four numbers(1 through 4) in a row on one line"
+    input = gets.chomp
+    until input.length == 4 && input.each_char.map{|i| i.to_i}.all?{|i| i >= 1 && i <= 4}
+      puts "Enter a valid code!!!!!"
+      input = gets.chomp
     end
-    @@board <<= @@player_code
-    p @@board
-  end
-  
-  
-  def compare_codes?
-    @player_code.each_with_index do |code, index|
-      if @secret_code.include?(code)
-        if code == @secret_code[index]
-          #puts "hi"
-          @pegs[index] = "B"
-        else
-          #puts "ni"
-          @pegs[index] = "W"
-        end
-      else
-        #puts "nay"
-        @pegs[index] = "?"
-      end
-    end
-    display_board
-  end
 
-
-
-  def display_board
-    @board.each do |row|
-     puts "#{row} #{@pegs}"
+    @player_code = input.split('')
   end
-  end
-
-  
-  
-  
 end
 
-#game.get_code
-#game.compare_codes?
-#game.check_progress?
-#game.get_code
-#
-#
+
+
+
 class Game
+  attr_accessor :board
+
   def initialize
-    @game = Game_Board.new()
+    @board = Board.new()
   end
   
-  def play
-    3.times do
-      @game.make_code
-      @game.get_code
-     # @game.compare_codes?
-     # @game.check_progress?
+  def play_again
+    puts "Enter Y play again or N to end"
+    answer = gets.chomp
+    case answer
+    when "y"
+      @board = Board.new
+      @board.decide_play_method
+      play_again
+    when "Y"
+      @board = Board.new
+      @board.decide_play_method
+      play_again
+    else
+      puts "Thanks for playing"
     end
   end
+  
 end
+
+#Instructions
+get_game_instructions()
 
 game_play = Game.new
-game_play.play
+game_play.board.decide_play_method
+game_play.play_again
